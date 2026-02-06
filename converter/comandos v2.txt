@@ -1,0 +1,21 @@
+
+# 2. Recompilar
+cargo build --release
+
+# Limpiar y reconvertir
+rm output/helios_core.hnf
+cargo run --release --bin helios-convert -- \
+    --text ./models/qwen2.5_4b_instruct \
+    --vision ./models/clip-vit-large-patch14 \
+    --code ./models/deepseek-coder-1.3b-instruct \
+    -o output/helios_core.hnf
+
+# Validar (debería dar 0 errores, 0 warnings)
+cargo run --release --bin validate -- output/helios_core.hnf -v
+
+# Inspeccionar
+cargo run --release --bin inspect -- output/helios_core.hnf
+
+
+# 4. Verificar que tiene tensores
+tail -c 10000 models_test/helios_core.hnf | strings | grep "name"
